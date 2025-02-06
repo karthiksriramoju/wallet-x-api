@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const access_1 = require("../middleware/access");
+const auth_1 = require("../middleware/auth");
+const tokenController_1 = require("../controllers/tokenController");
+const userController_1 = require("../controllers/userController");
+const express_1 = require("express");
+const router = (0, express_1.Router)();
+router.post('/signup', access_1.access, userController_1.signup);
+router.post('/network/switch', access_1.access, auth_1.authenticate, tokenController_1.switchNetwork);
+router.post('/balance', access_1.access, auth_1.authenticate, tokenController_1.getBalance);
+router.post('/transfer', access_1.access, auth_1.authenticate, tokenController_1.transfer);
+router.post('/airdrop', access_1.access, auth_1.authenticate, tokenController_1.requestAirdrop);
+router.post('/transactions', access_1.access, auth_1.authenticate, tokenController_1.getTransactionHistory);
+exports.default = router;
