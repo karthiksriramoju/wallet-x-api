@@ -111,14 +111,34 @@ const requestAirdrop = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({ error: "User not authenticated" });
             return;
         }
-        const { amount } = req.body;
+        const { amount, name } = req.body;
         const connection = new web3_js_1.Connection(req.user.currentNetwork, "confirmed");
-        const publicKey = new web3_js_1.PublicKey(req.user.wallets[0].PublicKey);
-        const signature = yield connection.requestAirdrop(publicKey, amount);
-        res.status(200).json({ message: "Airdrop requested", signature });
+        // Find the wallet by name
+        const wallet = req.user.wallets.find((wallet) => wallet.Name === name);
+        if (!wallet) {
+            res.status(404).json({ message: "Wallet not found" });
+            return;
+        }
+        const publicKey = new web3_js_1.PublicKey(wallet.PublicKey);
+        try {
+            // Airdrop SOL (amount in lamports)
+            const airdropSignature = yield connection.requestAirdrop(publicKey, amount * web3_js_1.LAMPORTS_PER_SOL);
+            yield connection.confirmTransaction(airdropSignature, "confirmed");
+            res.status(200).json({
+                message: "Airdrop successful",
+                publicKey: publicKey.toBase58(),
+                amount,
+            });
+            console.log("Airdrop successful ");
+            console.log("Amount", amount);
+            console.log(web3_js_1.LAMPORTS_PER_SOL);
+        }
+        catch (error) {
+            res.status(500).json({ message: "Airdrop failed", error: error.message });
+        }
     }
     catch (error) {
-        res.status(500).json({ error: "Airdrop failed", details: error.message });
+        console.log(error);
     }
 });
 exports.requestAirdrop = requestAirdrop;

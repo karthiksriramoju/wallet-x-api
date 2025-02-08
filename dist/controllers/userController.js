@@ -48,20 +48,37 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(password, name, telegramId);
         const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
         const { mnemonic, publicKey, privateKey } = yield generateWallet(0);
-        const newUser = new userModel_1.default({
-            telegramId,
-            password: hashedPassword,
-            mnemonic: mnemonic,
-            wallets: [{ Name: name, PublicKey: publicKey, PrivateKey: privateKey }],
-            mainWallet: { Name: name, PublicKey: publicKey, PrivateKey: privateKey }
-        });
-        yield newUser.save();
-        res.status(201).json({
-            message: 'User created',
-            mnemonic: mnemonic,
-            publicKey: publicKey,
-            privateKey: privateKey
-        });
+        const user = yield userModel_1.default.findOne({ telegramId });
+        console.log(user);
+        if (!user) {
+            // Create new user if not exists
+            const newUser = new userModel_1.default({
+                telegramId,
+                password: hashedPassword,
+                mnemonic,
+                wallets: [{ Name: name, PublicKey: publicKey, PrivateKey: privateKey }],
+                mainWallet: { Name: name, PublicKey: publicKey, PrivateKey: privateKey },
+            });
+            yield newUser.save();
+            res.status(201).json({
+                message: "User created",
+                mnemonic,
+                publicKey,
+                privateKey,
+            });
+            console.log("New user created");
+        }
+        else {
+            // Add a new wallet to existing user
+            user.wallets.push({ Name: name, PublicKey: publicKey, PrivateKey: privateKey });
+            yield user.save();
+            res.status(200).json({
+                message: "Wallet added successfully",
+                publicKey,
+                privateKey,
+            });
+            console.log("Wallet added");
+        }
     }
     catch (error) {
         res.status(500).json({ error: 'Signup failed', details: error.message });

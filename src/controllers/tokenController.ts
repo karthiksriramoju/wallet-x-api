@@ -105,18 +105,42 @@ export const transfer = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const requestAirdrop = async (req: Request, res: Response): Promise<void> => {
-    try {
+    try {   
         if (!req.user) {
             res.status(400).json({ error: "User not authenticated" });
             return;
         }
-        const { amount } = req.body;
+        const { amount, name } = req.body;
         const connection = new Connection(req.user.currentNetwork, "confirmed");
-        const publicKey = new PublicKey(req.user.wallets[0].PublicKey);
-        const signature = await connection.requestAirdrop(publicKey, amount);
-        res.status(200).json({ message: "Airdrop requested", signature });
+        
+        // Find the wallet by name
+        const wallet = req.user.wallets.find((wallet) => wallet.Name === name);
+        
+        if (!wallet) {
+            res.status(404).json({ message: "Wallet not found" });
+            return
+        }
+        
+        const publicKey = new PublicKey(wallet.PublicKey);
+        
+        try {
+          // Airdrop SOL (amount in lamports)
+          const airdropSignature = await connection.requestAirdrop(publicKey, amount * LAMPORTS_PER_SOL );
+          await connection.confirmTransaction(airdropSignature, "confirmed");
+        
+          res.status(200).json({
+            message: "Airdrop successful",
+            publicKey: publicKey.toBase58(),
+            amount,
+          });
+          console.log("Airdrop successful ")
+          console.log("Amount", amount)
+          console.log(LAMPORTS_PER_SOL)
+        } catch (error:any) {
+          res.status(500).json({ message: "Airdrop failed", error: error.message });
+        }
     } catch (error: any) {
-        res.status(500).json({ error: "Airdrop failed", details: error.message });
+        console.log(error)
     }
 };
 
