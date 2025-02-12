@@ -111,10 +111,13 @@ const requestAirdrop = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({ error: "User not authenticated" });
             return;
         }
-        const { amount, name } = req.body;
+        console.log(req.user.currentNetwork);
+        const { amount, walletName } = req.body;
+        console.log(walletName, amount);
         const connection = new web3_js_1.Connection(req.user.currentNetwork, "confirmed");
         // Find the wallet by name
-        const wallet = req.user.wallets.find((wallet) => wallet.Name === name);
+        const wallet = req.user.wallets.find((wallet) => wallet.Name === walletName);
+        console.log(wallet);
         if (!wallet) {
             res.status(404).json({ message: "Wallet not found" });
             return;
@@ -128,17 +131,19 @@ const requestAirdrop = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 message: "Airdrop successful",
                 publicKey: publicKey.toBase58(),
                 amount,
+                signature: airdropSignature,
             });
-            console.log("Airdrop successful ");
-            console.log("Amount", amount);
-            console.log(web3_js_1.LAMPORTS_PER_SOL);
+            console.log("Airdrop successful");
+            console.log("Amount:", amount);
+            console.log("LAMPORTS_PER_SOL:", web3_js_1.LAMPORTS_PER_SOL);
         }
         catch (error) {
             res.status(500).json({ message: "Airdrop failed", error: error.message });
         }
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
 exports.requestAirdrop = requestAirdrop;
@@ -148,8 +153,18 @@ const getTransactionHistory = (req, res) => __awaiter(void 0, void 0, void 0, fu
             res.status(400).json({ error: "User not authenticated" });
             return;
         }
+        console.log(req.user.currentNetwork);
+        const { walletName } = req.body;
+        console.log(walletName);
         const connection = new web3_js_1.Connection(req.user.currentNetwork, "confirmed");
-        const publicKey = new web3_js_1.PublicKey(req.user.wallets[0].PublicKey);
+        // Find the wallet by name
+        const wallet = req.user.wallets.find((wallet) => wallet.Name === walletName);
+        console.log(wallet);
+        if (!wallet) {
+            res.status(404).json({ message: "Wallet not found" });
+            return;
+        }
+        const publicKey = new web3_js_1.PublicKey(wallet.PublicKey);
         const transactions = yield connection.getSignaturesForAddress(publicKey);
         res.status(200).json({ transactions });
     }
