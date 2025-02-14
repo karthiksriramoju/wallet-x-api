@@ -22,6 +22,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             res.status(401).json({ error: "Telegram ID or password missing in request." });
             return;
         }
+        console.log(telegramId, password);
         const user = yield userModel_1.default.findOne({ telegramId });
         if (!user) {
             res.status(401).json({ error: "User is not registered." });
@@ -32,6 +33,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             res.status(401).json({ error: "Wrong password." });
             return;
         }
+        console.log(user);
         req.user = user;
         next();
     }

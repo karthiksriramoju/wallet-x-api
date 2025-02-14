@@ -20,7 +20,6 @@ const ed25519_hd_key_1 = require("ed25519-hd-key");
 const tweetnacl_1 = __importDefault(require("tweetnacl"));
 const web3_js_1 = require("@solana/web3.js");
 const bs58_1 = __importDefault(require("bs58"));
-const SECRET = process.env.JWT_SECRET || 'defaultsecret';
 const generateSeed = () => {
     const HDMnemonic = (0, bip39_1.generateMnemonic)();
     const HDSeed = (0, bip39_1.mnemonicToSeed)(HDMnemonic);
@@ -48,6 +47,8 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(password, name, telegramId);
         const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
         const { mnemonic, publicKey, privateKey } = yield generateWallet(0);
+        console.log(mnemonic, publicKey, privateKey);
+        console.log(telegramId);
         const user = yield userModel_1.default.findOne({ telegramId });
         console.log(user);
         if (!user) {
@@ -72,7 +73,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             // Add a new wallet to existing user
             user.wallets.push({ Name: name, PublicKey: publicKey, PrivateKey: privateKey });
             yield user.save();
-            res.status(200).json({
+            res.status(201).json({
                 message: "Wallet added successfully",
                 publicKey,
                 privateKey,

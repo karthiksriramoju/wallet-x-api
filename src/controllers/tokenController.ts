@@ -58,17 +58,26 @@ export const getBalance = async (req: Request, res: Response): Promise<void> => 
         }
         const { walletName } = req.body;
         const connection = new Connection(req.user.currentNetwork, "confirmed");
+        const walletNameF = req.user.wallets.find((w:any) => w.Name === walletName)?.PublicKey || "Wallet Name Not Found";
         const publicKey = new PublicKey(req.user.wallets.find((w:any) => w.Name === walletName)?.PublicKey || req.user.wallets[0].PublicKey);
+        if (walletNameF === "Wallet Name Not Found") {
+            res.status(404).json({ solBalance: "Wallet not found" });
+            return
+        }
+        else{
         const balance = await connection.getBalance(publicKey);
         const balanceInSol = balance / LAMPORTS_PER_SOL
         
         res.status(200).json({ balanceInSol });
+        }
     } catch (error: any) {
         res.status(500).json({ error: "Failed to fetch balance", details: error.message });
     }
 };
 
 export const transfer = async (req: Request, res: Response): Promise<void> => {
+    
+
   try {
       if (!req.user) {
           res.status(400).json({ error: 'User not authenticated' });

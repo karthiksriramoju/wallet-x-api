@@ -51,7 +51,7 @@ const switchNetwork = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.switchNetwork = switchNetwork;
 const getBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         if (!req.user) {
             res.status(400).json({ error: "User not authenticated" });
@@ -59,10 +59,17 @@ const getBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const { walletName } = req.body;
         const connection = new web3_js_1.Connection(req.user.currentNetwork, "confirmed");
-        const publicKey = new web3_js_1.PublicKey(((_a = req.user.wallets.find((w) => w.Name === walletName)) === null || _a === void 0 ? void 0 : _a.PublicKey) || req.user.wallets[0].PublicKey);
-        const balance = yield connection.getBalance(publicKey);
-        const balanceInSol = balance / web3_js_1.LAMPORTS_PER_SOL;
-        res.status(200).json({ balanceInSol });
+        const walletNameF = ((_a = req.user.wallets.find((w) => w.Name === walletName)) === null || _a === void 0 ? void 0 : _a.PublicKey) || "Wallet Name Not Found";
+        const publicKey = new web3_js_1.PublicKey(((_b = req.user.wallets.find((w) => w.Name === walletName)) === null || _b === void 0 ? void 0 : _b.PublicKey) || req.user.wallets[0].PublicKey);
+        if (walletNameF === "Wallet Name Not Found") {
+            res.status(404).json({ solBalance: "Wallet not found" });
+            return;
+        }
+        else {
+            const balance = yield connection.getBalance(publicKey);
+            const balanceInSol = balance / web3_js_1.LAMPORTS_PER_SOL;
+            res.status(200).json({ balanceInSol });
+        }
     }
     catch (error) {
         res.status(500).json({ error: "Failed to fetch balance", details: error.message });

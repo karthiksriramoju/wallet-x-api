@@ -10,7 +10,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         res.status(401).json({ error: "Telegram ID or password missing in request." }); 
         return;
       }
-
+      console.log(telegramId, password)
       const user = await User.findOne({ telegramId });
       if (!user) {
         res.status(401).json({ error: "User is not registered." }); 
@@ -22,6 +22,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         res.status(401).json({ error: "Wrong password." }); 
         return;
       }
+      console.log(user)
       req.user = user;
     next(); 
   }

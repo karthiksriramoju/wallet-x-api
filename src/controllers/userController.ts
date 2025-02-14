@@ -7,8 +7,6 @@ import nacl from 'tweetnacl';
 import { Keypair } from '@solana/web3.js';
 import bs58 from 'bs58';
 
-const SECRET = process.env.JWT_SECRET || 'defaultsecret';
-
 const generateSeed = () => {
     const HDMnemonic = generateMnemonic();
     const HDSeed = mnemonicToSeed(HDMnemonic);
@@ -38,6 +36,8 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
         console.log(password,name,telegramId);
         const hashedPassword = await bcrypt.hash(password, 10);
         const { mnemonic, publicKey, privateKey } = await generateWallet(0);
+        console.log(mnemonic, publicKey, privateKey);
+        console.log(telegramId);
         const user = await User.findOne({ telegramId });
         console.log(user);
         if (!user) {
@@ -63,7 +63,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
           user.wallets.push({ Name: name, PublicKey: publicKey, PrivateKey: privateKey });
         
           await user.save();
-            res.status(200).json({
+            res.status(201).json({
             message: "Wallet added successfully",
             publicKey,
             privateKey,
