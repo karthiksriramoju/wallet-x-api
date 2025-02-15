@@ -23,30 +23,35 @@ Ensure you have the following installed:
 - **Node.js** (>=16.x)
 - **MongoDB** (local or cloud instance)
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/karthiksriramoju/wallet-x-api.git
-   cd wallet-x-api
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Environment Variables
-Create a `.env` file in the root directory and configure the following:
-```env
-PORT=3000
-MONGO_URI=your_mongodb_connection_string
-API_TOKEN= your_key_to_authorize_requests_same_as_bot's_key
-```
-
 ### Running the API
 #### Development Mode
 ```bash
 npm run dev
 ```
+#### Production Mode
+```bash
+npm run build && npm start
+```
+
+## Exposing the Server Using ngrok
+To make your local server accessible over the internet, use **ngrok**:
+
+1. Install **ngrok** (if not installed):
+   ```bash
+   npm install -g ngrok
+   ```
+
+2. Start your local server:
+   ```bash
+   npm run dev
+   ```
+
+3. Run **ngrok** to expose your server:
+   ```bash
+   ngrok http http://localhost:3000
+   ```
+
+4. Copy the generated **public URL** from ngrok and use it to interact with your API over the internet.
 
 ## API Endpoints
 
