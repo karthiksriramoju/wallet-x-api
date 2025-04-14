@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use('/api', router);
 
-const PORT = parseInt(process.env.PORT || '3000') || 3000;
+const PORT = parseInt(process.env.PORT || '3005') || 3005;
 
 // Connect to MongoDB
 connectDB();

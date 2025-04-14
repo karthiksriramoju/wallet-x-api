@@ -9,6 +9,9 @@ const db_1 = __importDefault(require("./db/db"));
 const userRouter_1 = __importDefault(require("./routes/userRouter"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api', userRouter_1.default);
