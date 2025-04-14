@@ -33,7 +33,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST_BACKEND }}
-        username: ${{ secrets.SSH_USERNAME }}
+        username: root
         key: ${{ secrets.SSH_KEY }}
         script: |
           docker pull karthik1417/walletx-api:latest
