@@ -37,6 +37,6 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           docker pull karthik1417/walletx-api:latest
-          docker stop bwalletxot-api || true
+          docker stop walletxot-api || true
           docker rm walletx-api || true
           docker run -e MONGO_URI=${{ secrets.MONGO_URL }} -e API_TOKEN=${{ secrets.API_TOKEN }} -e PORT=3005 --restart always -d -p 3005:3005 --name walletx-api karthik1417/walletx-api:latest
