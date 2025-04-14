@@ -39,8 +39,4 @@ jobs:
           docker pull karthik1417/walletx-api:latest
           docker stop walletx-api || true
           docker rm walletx-api || true
-          docker run -d --restart always --name walletx-api -p 3005:3005 \
-            -e MONGO_URI=${{ secrets.MONGO_URL }} \
-            -e API_TOKEN=${{ secrets.API_TOKEN }} \
-            -e PORT=3005 \
-            karthik1417/walletx-api:latest
+          docker run -d --restart always --name walletx-api -p 3005:3005 -e MONGO_URI="${{ secrets.MONGO_URL }}" -e API_TOKEN="${{ secrets.API_TOKEN }}" -e PORT=3005 karthik1417/walletx-api:latest
