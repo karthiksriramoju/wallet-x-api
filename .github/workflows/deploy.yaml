@@ -29,7 +29,7 @@ jobs:
         tags: karthik1417/walletx-api:latest
 
     # Deploy Backend
-    - name: 🚀 Deploy Backend API to Droplet
+    - name: 🚀 Deploy Backend API to Droplet`
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST_BACKEND }}

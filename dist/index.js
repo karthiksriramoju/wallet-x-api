@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api', userRouter_1.default);
-const PORT = parseInt(process.env.PORT || '3000') || 3000;
+const PORT = parseInt(process.env.PORT || '3005') || 3005;
 // Connect to MongoDB
 (0, db_1.default)();
 app.listen(PORT, () => {
